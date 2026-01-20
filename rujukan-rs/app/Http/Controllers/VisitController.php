@@ -73,7 +73,8 @@ class VisitController extends Controller
 
     public function show(Visit $visit)
     {
-        $visit->load('patient');
+        $this->authorize('view', $visit);
+        $visit->load('patient', 'referrals.toHospital', 'referrals.toDepartment', 'referrals.toUser');
 
         $examinations = $visit->examinations()
             ->with([
@@ -82,9 +83,12 @@ class VisitController extends Controller
                 'soapNote',
                 'procedures.procedure',
                 'drugs.drug',
+                'documents.uploader',
             ])
             ->orderByDesc('examined_at')
             ->get();
+
+        $visit->setRelation('examinations', $examinations);
 
         $catalogProcedures = CatalogProcedure::where('hospital_id', auth()->user()->hospital_id)
             ->where('is_active', true)

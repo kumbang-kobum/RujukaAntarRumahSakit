@@ -45,4 +45,21 @@ class PatientController extends Controller
             'visits' => $patient->visits()->latest()->get()
         ]);
     }
+
+    //history pasien
+    public function history(Patient $patient)
+    {
+        $visits = Visit::with([
+                'examinations.procedures.procedure',
+                'examinations.drugs.drug',
+            ])
+            ->where('patient_id', $patient->id)
+            ->orderByDesc('visit_date')
+            ->get();
+
+        return Inertia::render('Patients/History', [
+            'patient' => $patient,
+            'visits' => $visits,
+        ]);
+    }
 }

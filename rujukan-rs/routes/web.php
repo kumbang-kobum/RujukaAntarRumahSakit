@@ -1,8 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\ExaminationController;
@@ -10,7 +12,8 @@ use App\Http\Controllers\VitalSignController;
 use App\Http\Controllers\SoapNoteController;
 use App\Http\Controllers\ExamProcedureController;
 use App\Http\Controllers\ExamDrugController;
-use Inertia\Inertia;
+use App\Http\Controllers\ClinicalDocumentController;
+use App\Http\Controllers\ReferralController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -26,36 +29,57 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    // Patients
     Route::resource('patients', PatientController::class)->only([
         'index','create','store','show'
     ]);
+    Route::get('/patients/{patient}/history', [PatientController::class, 'history'])
+        ->name('patients.history');
 
+    // Visits
     Route::resource('visits', VisitController::class)->only([
         'index','create','store','show'
     ]);
 
-    Route::post(
-    '/visits/{visit}/examinations',
-    [ExaminationController::class, 'store']
-)->name('examinations.store');
+    // Examinations
+    Route::post('/visits/{visit}/examinations', [ExaminationController::class, 'store'])
+        ->name('examinations.store');
 
-Route::post(
-    '/examinations/{examination}/vital-signs',
-    [VitalSignController::class, 'store']
-)->name('vital-signs.store');
+    // TTV
+    Route::post('/examinations/{examination}/vital-signs', [VitalSignController::class, 'store'])
+        ->name('vital-signs.store');
+
+    // SOAP
+    Route::post('/examinations/{examination}/soap', [SoapNoteController::class, 'store'])
+        ->name('soap.store');
+
+    // Procedures (Tindakan)
+    Route::post('/examinations/{examination}/procedures', [ExamProcedureController::class, 'store'])
+        ->name('exam-procedures.store');
+
+    // Drugs (Obat)
+    Route::post('/examinations/{examination}/drugs', [ExamDrugController::class, 'store'])
+        ->name('exam-drugs.store');
+
+    // Documents (Lab/Radiologi)
+    Route::post('/examinations/{examination}/documents', [ClinicalDocumentController::class, 'store'])
+        ->name('documents.store');
+    Route::get('/documents/{document}/download', [ClinicalDocumentController::class, 'download'])
+        ->name('documents.download');
+
+    // Referrals (Rujukan)
+    Route::get('/visits/{visit}/referrals/create', [ReferralController::class, 'create'])
+        ->name('referrals.create');
+    Route::post('/visits/{visit}/referrals', [ReferralController::class, 'store'])
+        ->name('referrals.store');
+    Route::get('/referrals/options', [ReferralController::class, 'options'])
+        ->name('referrals.options');
+
+    // (opsional) profile kalau kamu pakai
+    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-Route::post(
-    '/examinations/{examination}/soap',
-    [SoapNoteController::class, 'store']
-)->name('soap.store');
-
-Route::post('/examinations/{examination}/procedures', [ExamProcedureController::class, 'store'])
-  ->name('exam-procedures.store');
-
- Route::post('/examinations/{examination}/drugs', [ExamDrugController::class, 'store'])
-  ->name('exam-drugs.store');
-  
-
 
 require __DIR__.'/auth.php';

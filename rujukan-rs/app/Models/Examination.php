@@ -43,4 +43,9 @@ class Examination extends Model
     {
         return $this->hasMany(\App\Models\ExamDrug::class);
     }
+
+    public function documents()
+    {
+        return $this->hasMany(\App\Models\ClinicalDocument::class);
+    }
 }

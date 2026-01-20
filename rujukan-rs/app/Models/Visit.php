@@ -25,4 +25,25 @@ class Visit extends Model
     {
         return $this->hasMany(Examination::class);
     }
+
+    public function getTotalCostAttribute()
+    {
+        $total = 0;
+
+        foreach ($this->examinations as $exam) {
+            foreach ($exam->procedures as $p) {
+                $total += $p->qty * $p->price;
+            }
+            foreach ($exam->drugs as $d) {
+                $total += $d->qty * $d->price;
+            }
+        }
+
+        return $total;
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(\App\Models\Referral::class);
+    }
 }

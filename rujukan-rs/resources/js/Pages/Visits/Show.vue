@@ -71,6 +71,22 @@ function submitDrug(exam) {
   ensureDrugForm(exam)
   router.post(`/examinations/${exam.id}/drugs`, exam._drugForm)
 }
+
+function ensureDocForm(exam) {
+  if (!exam._docForm) {
+    exam._docForm = { type: 'lab', title: '', file: null }
+  }
+}
+
+function submitDocument(exam) {
+  ensureDocForm(exam)
+  const fd = new FormData()
+  fd.append('type', exam._docForm.type)
+  fd.append('title', exam._docForm.title)
+  fd.append('file', exam._docForm.file)
+
+  router.post(`/examinations/${exam.id}/documents`, fd)
+}
 </script>
 
 <template>
@@ -86,6 +102,14 @@ function submitDrug(exam) {
       <button class="bg-black text-white px-4 py-2 rounded" @click="addExamination">
         + Tambah Pemeriksaan
       </button>
+
+    <Link
+    class="bg-blue-600 text-white px-4 py-2 rounded"
+    :href="route('referrals.create', visit.id)"
+    >
+    Rujuk ke RS lain
+    </Link>
+
     </div>
 
     <div class="bg-white border rounded">
@@ -220,6 +244,98 @@ function submitDrug(exam) {
             </div>
             </div>
         </div>
+
+        <!-- DOKUMEN -->
+        <div class="mt-4 border rounded p-3 bg-white">
+        <div class="font-medium mb-2">Dokumen (Lab / Radiologi)</div>
+
+        <div class="hidden">{{ ensureDocForm(exam) }}</div>
+
+        <form @submit.prevent="submitDocument(exam)" class="grid grid-cols-1 md:grid-cols-4 gap-2">
+            <select v-model="exam._docForm.type" class="border p-2 rounded">
+            <option value="lab">Lab</option>
+            <option value="radiology">Radiologi</option>
+            <option value="other">Lainnya</option>
+            </select>
+
+            <input v-model="exam._docForm.title" class="border p-2 rounded md:col-span-2" placeholder="Judul dokumen" />
+            <input type="file" class="border p-2 rounded"
+            @change="e => exam._docForm.file = e.target.files[0]" />
+
+            <button class="bg-black text-white rounded px-3 py-2 md:col-span-4">
+            Upload
+            </button>
+        </form>
+
+        <div class="mt-3 text-sm">
+            <div v-if="exam.documents?.length === 0" class="text-gray-500">
+            Belum ada dokumen.
+            </div>
+
+            <div v-for="doc in exam.documents" :key="doc.id" class="flex justify-between border-b py-1">
+            <div>
+                <div class="font-medium">{{ doc.title }}</div>
+                <div class="text-gray-500">
+                {{ doc.type }} · {{ doc.original_name }}
+                </div>
+            </div>
+
+            <a class="underline text-sm" :href="`/documents/${doc.id}/download`">
+                Download
+            </a>
+            </div>
+        </div>
+        </div>
+
+                <!-- NOTA PEMBAYARAN -->
+        <div class="mt-6 border rounded p-4 bg-white">
+        <h2 class="font-semibold text-lg mb-2">Nota Pembayaran</h2>
+
+        <div class="text-sm space-y-1">
+            <div
+            v-for="exam in examinations"
+            :key="exam.id"
+            class="border-b pb-2 mb-2"
+            >
+            <!-- button pemeriksaan -->
+            <div class="font-medium">Pemeriksaan {{ exam.examined_at }}</div>
+            
+            <div v-for="p in exam.procedures" :key="'p'+p.id" class="flex justify-between">
+                <span>{{ p.procedure?.name }} ({{ p.qty }})</span>
+                <span>Rp {{ (p.qty * p.price).toLocaleString() }}</span>
+            </div>
+
+            <div v-for="d in exam.drugs" :key="'d'+d.id" class="flex justify-between">
+                <span>{{ d.drug?.name }} ({{ d.qty }})</span>
+                <span>Rp {{ (d.qty * d.price).toLocaleString() }}</span>
+            </div>
+            </div>
+
+            <div class="flex justify-between font-semibold text-lg pt-2 border-t">
+            <span>Total</span>
+            <span>Rp {{ visit.total_cost?.toLocaleString() }}</span>
+            </div>
+        </div>
+        </div>
+
+        <div class="bg-white border rounded p-4">
+        <div class="font-medium mb-2">Rujukan</div>
+
+        <div v-if="!visit.referrals || visit.referrals.length === 0" class="text-sm text-gray-500">
+            Belum ada rujukan.
+        </div>
+
+        <div v-for="r in visit.referrals" :key="r.id" class="border-b last:border-b-0 py-2 text-sm">
+            <div class="font-medium">
+            Tujuan: {{ r.to_hospital?.name }}
+            <span v-if="r.to_department">· {{ r.to_department.name }}</span>
+            <span v-if="r.to_user">· {{ r.to_user.name }}</span>
+            </div>
+            <div class="text-gray-500">Status: {{ r.status }}</div>
+            <div v-if="r.reason">Alasan: {{ r.reason }}</div>
+        </div>
+        </div>
+
         </div>
         </div>
       </div>
