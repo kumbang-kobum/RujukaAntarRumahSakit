@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Gate;
+use App\Models\SharedLink;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 use Inertia\Inertia;
 
 class VisitController extends Controller
@@ -161,4 +164,44 @@ class VisitController extends Controller
             'visit' => $visit,
         ]);
     }
+
+    //kirim GoWA
+    public function sharedResumePdf(string $token)
+    {
+        $link = SharedLink::where('token', $token)
+            ->where('type', 'resume_pdf')
+            ->firstOrFail();
+
+        if ($link->expires_at && now()->greaterThan($link->expires_at)) {
+            abort(Response::HTTP_GONE, 'Link expired');
+        }
+
+        $visit = $link->visit()->firstOrFail();
+
+        // load data sama seperti resumePdf
+        $visit->load([
+            'patient',
+            'hospital',
+            'department',
+            'examinations.examiner',
+            'examinations.vitalSign',
+            'examinations.soapNote',
+            'examinations.procedures.procedure',
+            'examinations.drugs.drug',
+            'examinations.documents.uploader',
+            'referrals.toHospital',
+            'referrals.toDepartment',
+            'referrals.toUser',
+        ]);
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.resume-medis', [
+            'visit' => $visit,
+        ])->setPaper('A4', 'portrait');
+
+        // stream inline (GoWA biasanya bisa fetch)
+        return $pdf->stream(
+            'resume-medis-' . str_replace('/', '-', $visit->no_rawat) . '.pdf'
+        );
+    }
+
 }

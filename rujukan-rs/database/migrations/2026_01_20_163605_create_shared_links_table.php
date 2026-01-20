@@ -12,9 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('shared_links', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        $table->string('token', 80)->unique();
+        $table->string('type'); // resume_pdf
+        $table->unsignedBigInteger('visit_id');
+        $table->timestamp('expires_at')->nullable();
+        $table->timestamps();
+
+        $table->foreign('visit_id')->references('id')->on('visits')->cascadeOnDelete();
+    });
     }
 
     /**

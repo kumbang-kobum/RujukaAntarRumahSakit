@@ -94,6 +94,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/visits/{visit}/resume-pdf', [VisitController::class, 'resumePdf'])
     ->name('visits.resume.pdf');
 
+    //resume kirim GoWA
+    Route::get('/share/resume/{token}', [VisitController::class, 'sharedResumePdf'])
+    ->name('share.resume.pdf');
+
     // (opsional) profile kalau kamu pakai
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
