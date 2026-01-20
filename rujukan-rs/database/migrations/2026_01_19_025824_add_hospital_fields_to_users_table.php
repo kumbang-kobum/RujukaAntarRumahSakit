@@ -19,7 +19,7 @@ return new class extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropConstrainedForeignId('hospital_id');
-            $table->dropColumn(['phone_whatsapp', 'is_active', 'last_login_at']);
+            $table->dropColumn(['phone_whatsapp','is_active','last_login_at']);
         });
     }
 };

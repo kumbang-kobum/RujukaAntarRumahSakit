@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->unique(['hospital_id', 'name']);
+            $table->unique(['hospital_id','name']);
         });
     }
 

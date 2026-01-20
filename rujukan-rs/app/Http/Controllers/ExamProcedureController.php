@@ -14,18 +14,20 @@ class ExamProcedureController extends Controller
         $data = $request->validate([
             'procedure_id' => 'required|exists:catalog_procedures,id',
             'qty' => 'required|numeric|min:1',
+            'note' => 'nullable|string',
         ]);
 
-        $procedure = CatalogProcedure::findOrFail($data['procedure_id']);
+        $proc = CatalogProcedure::findOrFail($data['procedure_id']);
 
         ExamProcedure::create([
             'examination_id' => $examination->id,
-            'procedure_id' => $procedure->id,
+            'procedure_id' => $proc->id,
             'qty' => $data['qty'],
-            'price' => $procedure->default_price,
+            'price' => $proc->default_price,
+            'note' => $data['note'] ?? null,
             'performed_by_user_id' => $request->user()->id,
         ]);
 
-        return back()->with('success', 'Tindakan ditambahkan.');
+        return back();
     }
 }

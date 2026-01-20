@@ -9,34 +9,22 @@ return new class extends Migration {
     {
         Schema::create('catalog_procedures', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hospital_id')->constrained()->cascadeOnDelete();
-            $table->string('code')->nullable();
-            $table->string('name');
-            $table->decimal('default_price', 12, 2)->default(0);
-            $table->string('unit')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
+            $table->foreignId('hospital_id')->constrained('hospitals')->cascadeOnDelete();
 
-            $table->index(['hospital_id', 'name']);
-        });
-
-        Schema::create('catalog_drugs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('hospital_id')->constrained()->cascadeOnDelete();
             $table->string('code')->nullable();
             $table->string('name');
             $table->string('unit')->nullable();
             $table->decimal('default_price', 12, 2)->default(0);
             $table->boolean('is_active')->default(true);
+
             $table->timestamps();
 
-            $table->index(['hospital_id', 'name']);
+            $table->index(['hospital_id','name']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('catalog_drugs');
         Schema::dropIfExists('catalog_procedures');
     }
 };

@@ -10,7 +10,7 @@ class ExaminationController extends Controller
 {
     public function store(Request $request, Visit $visit)
     {
-        $exam = Examination::create([
+        Examination::create([
             'visit_id' => $visit->id,
             'examiner_user_id' => $request->user()->id,
             'examiner_hospital_id' => $request->user()->hospital_id,
@@ -18,6 +18,6 @@ class ExaminationController extends Controller
             'status' => 'draft',
         ]);
 
-        return back()->with('success', 'Pemeriksaan dibuat.');
+        return back();
     }
 }

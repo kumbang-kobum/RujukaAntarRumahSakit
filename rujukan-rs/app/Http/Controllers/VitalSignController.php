@@ -11,15 +11,15 @@ class VitalSignController extends Controller
     public function store(Request $request, Examination $examination)
     {
         $data = $request->validate([
-            'systolic' => 'nullable|integer',
-            'diastolic' => 'nullable|integer',
-            'pulse' => 'nullable|integer',
-            'resp_rate' => 'nullable|integer',
-            'temp' => 'nullable|numeric',
-            'spo2' => 'nullable|integer',
+            'systolic' => 'nullable|integer|min:0',
+            'diastolic' => 'nullable|integer|min:0',
+            'pulse' => 'nullable|integer|min:0',
+            'resp_rate' => 'nullable|integer|min:0',
+            'temperature' => 'nullable|numeric',
+            'spo2' => 'nullable|integer|min:0|max:100',
             'weight' => 'nullable|numeric',
             'height' => 'nullable|numeric',
-            'pain_scale' => 'nullable|integer',
+            'pain_scale' => 'nullable|integer|min:0|max:10',
         ]);
 
         VitalSign::updateOrCreate(
@@ -27,6 +27,6 @@ class VitalSignController extends Controller
             $data
         );
 
-        return back()->with('success', 'TTV disimpan.');
+        return back();
     }
 }

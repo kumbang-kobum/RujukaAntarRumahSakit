@@ -9,18 +9,15 @@ return new class extends Migration {
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-            $table->string('nik')->nullable(); // nanti bisa encrypt/cast
+            $table->string('nik')->nullable();
             $table->string('name');
             $table->date('dob')->nullable();
-            $table->enum('gender', ['M', 'F'])->nullable();
-
+            $table->enum('gender', ['M','F'])->nullable();
             $table->text('address_detail')->nullable();
             $table->string('phone')->nullable();
-
             $table->timestamps();
 
-            $table->index(['nik', 'name']);
+            $table->index(['nik','name']);
         });
     }
 

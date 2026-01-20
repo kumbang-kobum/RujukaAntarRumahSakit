@@ -22,6 +22,6 @@ class SoapNoteController extends Controller
             $data
         );
 
-        return back()->with('success', 'SOAP disimpan.');
+        return back();
     }
 }

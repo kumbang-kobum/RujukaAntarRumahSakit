@@ -11,13 +11,13 @@ return new class extends Migration {
             $table->id();
             $table->uuid('patient_id');
             $table->foreignId('hospital_id')->constrained()->cascadeOnDelete();
-            $table->string('medical_record_no'); // no_rm per RS
+            $table->string('medical_record_no');
             $table->timestamps();
 
             $table->foreign('patient_id')->references('id')->on('patients')->cascadeOnDelete();
 
-            $table->unique(['hospital_id', 'medical_record_no']);
-            $table->unique(['patient_id', 'hospital_id']);
+            $table->unique(['hospital_id','medical_record_no']);
+            $table->unique(['patient_id','hospital_id']);
         });
     }
 

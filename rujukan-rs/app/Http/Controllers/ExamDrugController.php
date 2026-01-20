@@ -14,6 +14,7 @@ class ExamDrugController extends Controller
         $data = $request->validate([
             'drug_id' => 'required|exists:catalog_drugs,id',
             'qty' => 'required|numeric|min:1',
+            'note' => 'nullable|string',
         ]);
 
         $drug = CatalogDrug::findOrFail($data['drug_id']);
@@ -23,8 +24,9 @@ class ExamDrugController extends Controller
             'drug_id' => $drug->id,
             'qty' => $data['qty'],
             'price' => $drug->default_price,
+            'note' => $data['note'] ?? null,
         ]);
 
-        return back()->with('success', 'Obat ditambahkan.');
+        return back();
     }
 }

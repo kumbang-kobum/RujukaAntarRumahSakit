@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->unsignedInteger('last_number')->default(0);
             $table->timestamps();
 
-            $table->unique(['hospital_id', 'date']);
+            $table->unique(['hospital_id','date']);
         });
     }
 

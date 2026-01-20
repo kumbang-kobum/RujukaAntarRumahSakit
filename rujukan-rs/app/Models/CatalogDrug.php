@@ -6,19 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class CatalogDrug extends Model
 {
-    protected $table = 'catalog_drugs';
-
-    protected $fillable = [
-        'hospital_id',
-        'code',
-        'name',
-        'unit',
-        'default_price',
-        'is_active',
-    ];
-
-    protected $casts = [
-        'default_price' => 'decimal:2',
-        'is_active' => 'boolean',
-    ];
+    protected $fillable = ['hospital_id','code','name','unit','default_price','is_active'];
 }
