@@ -25,12 +25,12 @@ class PatientController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nik' => 'nullable|string',
-            'name' => 'required|string',
+            'nik' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
             'dob' => 'nullable|date',
             'gender' => 'nullable|in:M,F',
             'address_detail' => 'nullable|string',
-            'phone' => 'nullable|string',
+            'phone' => 'nullable|string|max:255',
         ]);
 
         $patient = Patient::create($data);

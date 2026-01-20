@@ -15,19 +15,20 @@ use App\Http\Controllers\ExamDrugController;
 use App\Http\Controllers\ClinicalDocumentController;
 use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+    // kalau sudah login, langsung dashboard
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    return Inertia::render('Landing');
+})->name('home');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
