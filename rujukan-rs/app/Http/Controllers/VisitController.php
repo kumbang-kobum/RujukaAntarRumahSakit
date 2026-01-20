@@ -74,7 +74,7 @@ class VisitController extends Controller
     public function show(Visit $visit)
     {
         $this->authorize('view', $visit);
-        $visit->load('patient', 'referrals.toHospital', 'referrals.toDepartment', 'referrals.toUser');
+        $visit->load('patient', 'billing', 'referrals.toHospital', 'referrals.toDepartment', 'referrals.toUser');
 
         $examinations = $visit->examinations()
             ->with([

@@ -14,6 +14,7 @@ use App\Http\Controllers\ExamProcedureController;
 use App\Http\Controllers\ExamDrugController;
 use App\Http\Controllers\ClinicalDocumentController;
 use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\BillingController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -75,6 +76,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('referrals.store');
     Route::get('/referrals/options', [ReferralController::class, 'options'])
         ->name('referrals.options');
+
+    // Billings (Tagihan)
+    Route::post('/visits/{visit}/close', [BillingController::class, 'close'])
+    ->name('visits.close');
+
+    Route::get('/billings/{billing}', [BillingController::class, 'show'])
+        ->name('billings.show');
+        
+    Route::get('/billings/{billing}/pdf', [BillingController::class, 'pdf'])
+    ->name('billings.pdf');    
 
     // (opsional) profile kalau kamu pakai
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

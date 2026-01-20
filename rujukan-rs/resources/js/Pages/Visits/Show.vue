@@ -110,6 +110,22 @@ function submitDocument(exam) {
     Rujuk ke RS lain
     </Link>
 
+    <button
+    v-if="visit.status !== 'closed'"
+    class="bg-red-600 text-white px-4 py-2 rounded"
+    @click="router.post(`/visits/${visit.id}/close`)"
+  >
+    Tutup & Buat Nota
+  </button>
+
+  <a
+    v-else
+    class="underline text-sm"
+    :href="`/billings/${visit.billing?.id}`"
+  >
+    Lihat Nota
+  </a>
+
     </div>
 
     <div class="bg-white border rounded">

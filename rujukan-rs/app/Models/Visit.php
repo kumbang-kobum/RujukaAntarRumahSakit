@@ -46,4 +46,9 @@ class Visit extends Model
     {
         return $this->hasMany(\App\Models\Referral::class);
     }
+
+    public function billing()
+    {
+        return $this->hasOne(\App\Models\Billing::class);
+    }
 }
