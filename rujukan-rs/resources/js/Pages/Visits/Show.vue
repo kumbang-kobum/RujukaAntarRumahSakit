@@ -352,6 +352,23 @@ function submitDocument(exam) {
         </div>
         </div>
 
+        <!-- button cetak resume pdf -->
+        <a
+          class="bg-blue-600 text-white px-4 py-2 rounded inline-block"
+          :href="route('visits.resume.preview', visit.id)"
+          target="_blank"
+        >
+          Preview Resume (Print)
+        </a>
+
+        <a
+          class="bg-black text-white px-4 py-2 rounded inline-block ml-2"
+          :href="route('visits.resume.pdf', visit.id)"
+          target="_blank"
+        >
+          Download PDF
+        </a>
+
         </div>
         </div>
       </div>

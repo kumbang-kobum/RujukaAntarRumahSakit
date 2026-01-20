@@ -48,4 +48,8 @@ class Examination extends Model
     {
         return $this->hasMany(\App\Models\ClinicalDocument::class);
     }
+
+    protected $casts = [
+    'examined_at' => 'datetime',
+    ];
 }

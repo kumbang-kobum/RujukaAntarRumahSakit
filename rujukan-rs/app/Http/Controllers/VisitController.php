@@ -10,6 +10,8 @@ use App\Models\CatalogDrug;
 use App\Services\GenerateNoRawatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class VisitController extends Controller
@@ -105,6 +107,58 @@ class VisitController extends Controller
             'examinations' => $examinations,
             'catalogProcedures' => $catalogProcedures,
             'catalogDrugs' => $catalogDrugs,
+        ]);
+    }
+
+    public function resumePdf(Visit $visit)
+    {
+        Gate::authorize('view', $visit);
+
+        $visit->load([
+            'patient',
+            'hospital',
+            'department',
+            'examinations.examiner',
+            'examinations.vitalSign',
+            'examinations.soapNote',
+            'examinations.procedures.procedure',
+            'examinations.drugs.drug',
+            'examinations.documents.uploader',
+            'referrals.toHospital',
+            'referrals.toDepartment',
+            'referrals.toUser',
+        ]);
+
+        $pdf = Pdf::loadView('pdf.resume-medis', [
+            'visit' => $visit,
+        ])->setPaper('A4', 'portrait');
+
+        return $pdf->download(
+            'resume-medis-' . str_replace('/', '-', $visit->no_rawat) . '.pdf'
+        );
+    }
+    
+    public function resumePreview(Visit $visit)
+    {
+        Gate::authorize('view', $visit);
+
+        $visit->load([
+            'patient',
+            'hospital',
+            'department',
+            'examinations.examiner',
+            'examinations.vitalSign',
+            'examinations.soapNote',
+            'examinations.procedures.procedure',
+            'examinations.drugs.drug',
+            'examinations.documents.uploader',
+            'referrals.toHospital',
+            'referrals.toDepartment',
+            'referrals.toUser',
+        ]);
+
+        return view('resume.preview', [
+            'visit' => $visit,
         ]);
     }
 }

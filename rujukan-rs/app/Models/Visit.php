@@ -51,4 +51,19 @@ class Visit extends Model
     {
         return $this->hasOne(\App\Models\Billing::class);
     }
+
+    public function hospital()
+    {
+        return $this->belongsTo(\App\Models\Hospital::class);
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(\App\Models\Department::class);
+    }
+
+    protected $casts = [
+    'visit_date' => 'datetime',
+    'closed_at' => 'datetime',
+    ];
 }

@@ -85,7 +85,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('billings.show');
         
     Route::get('/billings/{billing}/pdf', [BillingController::class, 'pdf'])
-    ->name('billings.pdf');    
+    ->name('billings.pdf');
+    
+    //resume pdf pasien
+    Route::get('/visits/{visit}/resume', [VisitController::class, 'resumePreview'])
+    ->name('visits.resume.preview');
+
+    Route::get('/visits/{visit}/resume-pdf', [VisitController::class, 'resumePdf'])
+    ->name('visits.resume.pdf');
 
     // (opsional) profile kalau kamu pakai
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
